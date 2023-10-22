@@ -5,5 +5,5 @@ app.use(express.json());
 app.use(cors());
 
 app.listen(3001, () => {
-  console.log("Listening");
+  console.log("Running");
 });
