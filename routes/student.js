@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { Students, Divisions, Classes } = require("../models");
+const { validateToken } = require("../middlewares/userAuth");
+const { sign } = require("jsonwebtoken");
 
 // Get All Students
 router.get("/", async (req, res) => {
@@ -44,9 +46,42 @@ router.get("/byId/:id", async (req, res) => {
   }
 });
 
+// Student Login
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const student = await Students.findOne({ where: { email: email } });
+    if (!student) return res.json({ error: "No Such student" });
+    console.log(password, student.password);
+    if (password === student.password) {
+      const accessToken = sign(
+        {
+          email: student.email,
+          name: student.name,
+          id: student.id,
+          role: student.role,
+        },
+        "secretkey"
+      );
+      return res.json({
+        token: accessToken,
+        email: email,
+        name: student.name,
+        id: student.id,
+        role: student.role,
+      });
+    } else {
+      return res.json({ error: "Wrong E-mail or Password" });
+    }
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+});
+
 // Post New Student
 router.post("/", async (req, res) => {
-  const { name, age, email, password, location, classId, divisionId } =
+  const { name, birthdate, email, password, location, classId, divisionId } =
     req.body;
 
   const student = await Students.findOne({ where: { email: email } });
@@ -54,7 +89,7 @@ router.post("/", async (req, res) => {
 
   Students.create({
     name,
-    age,
+    birthdate,
     email,
     password,
     location,
@@ -69,7 +104,7 @@ router.post("/", async (req, res) => {
 // Update Student Row
 router.put("/:id", async (req, res) => {
   const id = req.params.id;
-  const { name, age, email, password, location, classId, divisionId } =
+  const { name, birthdate, email, password, location, classId, divisionId } =
     req.body;
 
   const student = await Students.findOne({ where: { email: email } });
@@ -78,7 +113,7 @@ router.put("/:id", async (req, res) => {
   Students.update(
     {
       name,
-      age,
+      birthdate,
       email,
       password,
       location,
@@ -109,6 +144,10 @@ router.delete("/:id", async (req, res) => {
   });
 
   return res.json({ message: "Student has been Deleted" });
+});
+
+router.get("/authToken", validateToken, (req, res) => {
+  res.json(req.user);
 });
 
 module.exports = router;

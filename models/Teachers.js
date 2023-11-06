@@ -4,8 +4,8 @@ module.exports = (sequelize, DataType) => {
       type: DataType.STRING(),
       allowNull: false,
     },
-    age: {
-      type: DataType.STRING(),
+    birthdate: {
+      type: DataType.DATEONLY(),
       allowNull: false,
     },
     degree: {

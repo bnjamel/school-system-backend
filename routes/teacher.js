@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { Teachers, Subjects, Appreciation_Books } = require("../models");
+const { validateToken } = require("../middlewares/userAuth");
+const { sign } = require("jsonwebtoken");
 
 // Get All Teachers
 router.get("/", async (req, res) => {
@@ -44,11 +46,44 @@ router.get("/byId/:id", async (req, res) => {
   }
 });
 
+// Teacher Login
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const teacher = await Teachers.findOne({ where: { email: email } });
+    if (!teacher) return res.json({ error: "No Such teacher" });
+
+    if (password === teacher.password) {
+      const accessToken = sign(
+        {
+          email: teacher.email,
+          fullName: teacher.name,
+          id: teacher.id,
+          role: teacher.role,
+        },
+        "secretkey"
+      );
+      return res.json({
+        token: accessToken,
+        email: email,
+        fullName: teacher.name,
+        id: teacher.id,
+        role: teacher.role,
+      });
+    } else {
+      return res.json({ error: "Wrong E-mail or Password" });
+    }
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+});
+
 // Post New Teacher
 router.post("/", async (req, res) => {
   const {
     name,
-    age,
+    birthdate,
     degree,
     experience,
     email,
@@ -64,7 +99,7 @@ router.post("/", async (req, res) => {
 
   Teachers.create({
     name,
-    age,
+    birthdate,
     degree,
     experience,
     email,
@@ -82,7 +117,7 @@ router.put("/:id", async (req, res) => {
   const id = req.params.id;
   const {
     name,
-    age,
+    birthdate,
     degree,
     experience,
     email,
@@ -98,7 +133,7 @@ router.put("/:id", async (req, res) => {
   Teachers.update(
     {
       name,
-      age,
+      birthdate,
       degree,
       experience,
       email,
@@ -131,6 +166,10 @@ router.delete("/:id", async (req, res) => {
   });
 
   return res.json({ message: "Teacher has been Deleted" });
+});
+
+router.get("/authToken", validateToken, (req, res) => {
+  return res.json(req.user);
 });
 
 module.exports = router;

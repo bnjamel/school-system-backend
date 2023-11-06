@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { Admins } = require("../models");
+const { validateToken } = require("../middlewares/userAuth");
+const { sign } = require("jsonwebtoken");
 
 // Get All Admins
 router.get("/", async (req, res) => {
@@ -40,16 +42,50 @@ router.get("/byId/:id", async (req, res) => {
   }
 });
 
+// Admin Login
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const admin = await Admins.findOne({ where: { email: email } });
+    if (!admin) return res.json({ error: "No Such admin" });
+
+    if (password === admin.password) {
+      const accessToken = sign(
+        {
+          email: admin.email,
+          fullName: admin.name,
+          id: admin.id,
+          role: admin.role,
+        },
+        "secretkey"
+      );
+      return res.json({
+        token: accessToken,
+        email: email,
+        fullName: admin.name,
+        id: admin.id,
+        role: admin.role,
+      });
+    } else {
+      return res.json({ error: "Wrong E-mail or Password" });
+    }
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+});
+
 // Post New Admin
 router.post("/", async (req, res) => {
-  const { name, age, degree, experience, email, password, location } = req.body;
+  const { name, birthdate, degree, experience, email, password, location } =
+    req.body;
 
   const admin = await Admins.findOne({ where: { email: email } });
   if (admin) return res.json({ error: "Admin Already Exist" });
 
   Admins.create({
     name,
-    age,
+    birthdate,
     degree,
     experience,
     email,
@@ -64,7 +100,8 @@ router.post("/", async (req, res) => {
 // Update Admin Row
 router.put("/:id", async (req, res) => {
   const id = req.params.id;
-  const { name, age, degree, experience, email, password, location } = req.body;
+  const { name, birthdate, degree, experience, email, password, location } =
+    req.body;
 
   const admin = await Admins.findOne({ where: { id: id } });
   if (!admin) return res.json({ error: "Admin Does Not Exist!" });
@@ -72,7 +109,7 @@ router.put("/:id", async (req, res) => {
   Admins.update(
     {
       name,
-      age,
+      birthdate,
       degree,
       experience,
       email,
@@ -104,6 +141,10 @@ router.delete("/:id", async (req, res) => {
   });
 
   return res.json({ message: "Admin has been Deleted" });
+});
+
+router.get("/authToken", validateToken, (req, res) => {
+  res.json(req.user);
 });
 
 module.exports = router;
