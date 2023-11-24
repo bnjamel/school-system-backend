@@ -4,6 +4,10 @@ module.exports = (sequelize, DataType) => {
       type: DataType.STRING(),
       allowNull: false,
     },
+    image: {
+      type: DataType.STRING(),
+      allowNull: false,
+    },
     birthdate: {
       type: DataType.DATEONLY(),
       allowNull: false,
@@ -30,6 +34,8 @@ module.exports = (sequelize, DataType) => {
   Students.associate = (modules) => {
     Students.belongsTo(modules.Divisions);
     Students.belongsTo(modules.Classes);
+    Students.hasOne(modules.Student_Document);
+    Students.hasOne(modules.Study_Biography);
   };
 
   return Students;

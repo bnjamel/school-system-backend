@@ -1,13 +1,20 @@
 const express = require("express");
 const router = express.Router();
-const { Students, Divisions, Classes } = require("../models");
+const {
+  Students,
+  Divisions,
+  Classes,
+  Student_Document,
+  Study_Biography,
+} = require("../models");
 const { validateToken } = require("../middlewares/userAuth");
 const { sign } = require("jsonwebtoken");
+const { uploadFile } = require("../middlewares/uploadFile");
 
 // Get All Students
 router.get("/", async (req, res) => {
   const students = await Students.findAll({
-    include: [Divisions, Classes],
+    include: [Divisions, Classes, Student_Document, Study_Biography],
   });
   if (!students) return res.json({ error: "Error, can't fetch students" });
 
@@ -22,7 +29,7 @@ router.get("/:name", async (req, res) => {
 
   const student = await Students.findOne({
     where: { name: name },
-    include: [Divisions, Classes],
+    include: [Divisions, Classes, Student_Document, Study_Biography],
   });
   if (student) {
     return res.json(student);
@@ -37,7 +44,7 @@ router.get("/byId/:id", async (req, res) => {
 
   const student = await Students.findOne({
     where: { id: id },
-    include: [Divisions, Classes],
+    include: [Divisions, Classes, Student_Document, Study_Biography],
   });
   if (student) {
     return res.json(student);
@@ -80,9 +87,10 @@ router.post("/login", async (req, res) => {
 });
 
 // Post New Student
-router.post("/", async (req, res) => {
+router.post("/", uploadFile.single("image"), async (req, res) => {
   const { name, birthdate, email, password, location, classId, divisionId } =
     req.body;
+  const image = req.file.filename;
 
   const student = await Students.findOne({ where: { email: email } });
   if (student) return res.json({ error: "student Already Exist" });
@@ -96,6 +104,7 @@ router.post("/", async (req, res) => {
     role: "student",
     ClassId: classId,
     DivisionId: divisionId,
+    image: image,
   });
 
   return res.json({ message: "Student has been Added" });

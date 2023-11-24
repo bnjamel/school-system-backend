@@ -3,6 +3,9 @@ const app = express();
 const cors = require("cors");
 app.use(express.json());
 app.use(cors());
+
+app.use(express.static("public"));
+
 const db = require("./models");
 
 // ! Admin Router
@@ -24,6 +27,14 @@ app.use("/division", divisionRouter);
 // ! Student Router
 const studentRouter = require("./routes/student");
 app.use("/student", studentRouter);
+
+// ! Student Router
+const studentDocumentRouter = require("./routes/student_document");
+app.use("/student_document", studentDocumentRouter);
+
+// ! Student Router
+const studentBiographyRouter = require("./routes/student_biography");
+app.use("/student_biography", studentBiographyRouter);
 
 // ! Subject Router
 const subjectRouter = require("./routes/subject");
