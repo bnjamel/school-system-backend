@@ -116,7 +116,7 @@ router.post("/", uploadFile.single("image"), async (req, res) => {
 });
 
 // Update Teacher Row
-router.put("/:id", async (req, res) => {
+router.put("/:id", uploadFile.single("image"), async (req, res) => {
   const id = req.params.id;
   const {
     name,
@@ -129,6 +129,8 @@ router.put("/:id", async (req, res) => {
     subjectId,
     role,
   } = req.body;
+  const image = req.file.filename;
+
 
   const teacher = await Teachers.findOne({ where: { email: email } });
   if (!teacher) return res.json({ error: "Teacher Does Not Exist!" });
@@ -144,6 +146,7 @@ router.put("/:id", async (req, res) => {
       location,
       role: role,
       SubjectId: subjectId,
+      image: image
     },
     {
       where: {

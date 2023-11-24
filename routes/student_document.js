@@ -37,8 +37,9 @@ router.post("/", uploadFile.single("image"), async (req, res) => {
 });
 
 // Update Document Row
-router.put("/:id", async (req, res) => {
+router.put("/:id", uploadFile.single("image"), async (req, res) => {
   const { name, StudentId } = req.body;
+  const image = req.file.filename;
 
   const document = await Student_Document.findOne({
     where: { StudentId: StudentId },
@@ -48,6 +49,7 @@ router.put("/:id", async (req, res) => {
   Student_Document.update(
     {
       name,
+      image: image
     },
     {
       where: {

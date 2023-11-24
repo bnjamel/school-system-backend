@@ -54,9 +54,10 @@ router.post("/", uploadFile.single("image"), async (req, res) => {
 });
 
 // Update Teacher Row
-router.put("/:id", async (req, res) => {
+router.put("/:id", uploadFile.single("image"), async (req, res) => {
   const id = req.params.id;
   const { name } = req.body;
+  const image = req.file.filename;
 
   const appreciation_Book = await Teachers.findOne({ where: { id: id } });
   if (!appreciation_Book)
@@ -65,6 +66,7 @@ router.put("/:id", async (req, res) => {
   Appreciation_Books.update(
     {
       name,
+      image: image
     },
     {
       where: {
