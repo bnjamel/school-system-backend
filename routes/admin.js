@@ -3,6 +3,7 @@ const router = express.Router();
 const { Admins } = require("../models");
 const { validateToken } = require("../middlewares/userAuth");
 const { sign } = require("jsonwebtoken");
+const { uploadFile } = require("../middlewares/uploadFile");
 
 // Get All Admins
 router.get("/", async (req, res) => {
@@ -76,9 +77,10 @@ router.post("/login", async (req, res) => {
 });
 
 // Post New Admin
-router.post("/", async (req, res) => {
+router.post("/", uploadFile.single("image"), async (req, res) => {
   const { name, birthdate, degree, experience, email, password, location } =
     req.body;
+  const image = req.file.filename;
 
   const admin = await Admins.findOne({ where: { email: email } });
   if (admin) return res.json({ error: "Admin Already Exist" });
@@ -92,6 +94,7 @@ router.post("/", async (req, res) => {
     password,
     location,
     role: "admin",
+    image: image,
   });
 
   return res.json({ message: "Admin has been Added" });

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { Appreciation_Books, Teachers } = require("../models");
+const { uploadFile } = require("../middlewares/uploadFile");
 
 // Get All Appreciation_Books
 router.get("/", async (req, res) => {
@@ -33,8 +34,9 @@ router.get("/byId/:id", async (req, res) => {
 });
 
 // Post New Appreciation book
-router.post("/", async (req, res) => {
+router.post("/", uploadFile.single("image"), async (req, res) => {
   const { name, teacherId } = req.body;
+  const image = req.file.filename;
 
   const appreciation_Book = await Appreciation_Books.findOne({
     where: { name: name, TeacherId: teacherId },
@@ -45,6 +47,7 @@ router.post("/", async (req, res) => {
   Appreciation_Books.create({
     name,
     TeacherId: teacherId,
+    image: image,
   });
 
   return res.json({ message: "Appreciation book has been added" });

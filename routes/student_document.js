@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { Student_Document } = require("../models");
+const { uploadFile } = require("../middlewares/uploadFile");
 
 // Get Document by Id
 router.get("/byId/:id", async (req, res) => {
@@ -17,8 +18,9 @@ router.get("/byId/:id", async (req, res) => {
 });
 
 // Post New Document
-router.post("/", async (req, res) => {
+router.post("/", uploadFile.single("image"), async (req, res) => {
   const { name, StudentId } = req.body;
+  const image = req.file.filename;
 
   const document = await Student_Document.findOne({
     where: { StudentId: StudentId },
@@ -28,6 +30,7 @@ router.post("/", async (req, res) => {
   Student_Document.create({
     name,
     StudentId,
+    image: image,
   });
 
   return res.json({ message: "Document has been Added" });

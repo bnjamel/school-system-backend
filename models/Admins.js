@@ -4,6 +4,10 @@ module.exports = (sequelize, DataType) => {
       type: DataType.STRING(),
       allowNull: false,
     },
+    image: {
+      type: DataType.STRING(),
+      allowNull: false,
+    },
     birthdate: {
       type: DataType.DATEONLY(),
       allowNull: false,

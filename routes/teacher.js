@@ -3,6 +3,7 @@ const router = express.Router();
 const { Teachers, Subjects, Appreciation_Books } = require("../models");
 const { validateToken } = require("../middlewares/userAuth");
 const { sign } = require("jsonwebtoken");
+const { uploadFile } = require("../middlewares/uploadFile");
 
 // Get All Teachers
 router.get("/", async (req, res) => {
@@ -80,7 +81,7 @@ router.post("/login", async (req, res) => {
 });
 
 // Post New Teacher
-router.post("/", async (req, res) => {
+router.post("/", uploadFile.single("image"), async (req, res) => {
   const {
     name,
     birthdate,
@@ -91,6 +92,7 @@ router.post("/", async (req, res) => {
     location,
     subjectId,
   } = req.body;
+  const image = req.file.filename;
 
   const teacher = await Teachers.findOne({
     where: { email: email },
@@ -107,6 +109,7 @@ router.post("/", async (req, res) => {
     location,
     role: "teacher",
     SubjectId: subjectId,
+    image: image,
   });
 
   return res.json({ message: "Teacher has been Added" });
