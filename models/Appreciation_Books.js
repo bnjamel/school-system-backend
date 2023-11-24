@@ -4,6 +4,10 @@ module.exports = (sequelize, DataType) => {
       type: DataType.STRING(),
       allowNull: false,
     },
+    image: {
+      type: DataType.STRING(),
+      allowNull: false,
+    },
   });
 
   Appreciation_Books.associate = (modules) => {

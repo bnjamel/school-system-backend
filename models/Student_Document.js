@@ -4,6 +4,10 @@ module.exports = (sequelize, DataType) => {
       type: DataType.STRING(),
       allowNull: false,
     },
+    image: {
+      type: DataType.STRING(),
+      allowNull: false,
+    },
   });
 
   Student_Document.associate = (modules) => {
