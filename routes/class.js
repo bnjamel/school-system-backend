@@ -4,7 +4,9 @@ const { Classes, Divisions, Students } = require("../models");
 
 // Get All Classes
 router.get("/", async (req, res) => {
-  const classes = await Classes.findAll();
+  const classes = await Classes.findAll({
+    include: [Divisions, Students],
+  });
   if (!classes) return res.json({ error: "Error, can't fetch Classes" });
 
   if (classes.length <= 0) return res.json({ error: "There are no classes" });

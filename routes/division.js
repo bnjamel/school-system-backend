@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { Divisions, Students, Classes, Schedules } = require("../models");
+const { Divisions, Days, Students, Classes, Schedules } = require("../models");
 
 // Get All Divisions
 router.get("/", async (req, res) => {
@@ -16,14 +16,15 @@ router.get("/", async (req, res) => {
 });
 
 // Get Division by Name
-router.get("/:classId/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   const id = req.params.id;
-  const classId = req.params.classId;
+  // const classId = req.params.classId;
 
   const division = await Divisions.findOne({
-    where: { id: id, ClassId: classId },
+    where: { id: id },
     include: [Students, Classes, Schedules],
   });
+  
   if (division) {
     return res.json(division);
   } else {
