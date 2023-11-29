@@ -25,7 +25,7 @@ router.get("/byDivId/:id", async (req, res) => {
 
   const schedule = await Schedules.findAll({
     where: { DivisionId: id },
-    include: [Days],
+    include: [Days, Divisions],
   });
   if (!schedule) return res.json({ error: "Schedule Does not Exist" });
 

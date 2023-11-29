@@ -106,6 +106,12 @@ router.post("/", uploadFile.single("image"), async (req, res) => {
     DivisionId: divisionId,
     image: image,
   });
+  
+  Users.create({
+    name,
+    email,
+    role: "student",
+  })
 
   return res.json({ message: "Student has been Added" });
 });

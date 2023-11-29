@@ -4,6 +4,7 @@ const { Teachers, Subjects, Appreciation_Books } = require("../models");
 const { validateToken } = require("../middlewares/userAuth");
 const { sign } = require("jsonwebtoken");
 const { uploadFile } = require("../middlewares/uploadFile");
+const Users = require("../models/Users");
 
 // Get All Teachers
 router.get("/", async (req, res) => {
@@ -59,7 +60,7 @@ router.post("/login", async (req, res) => {
       const accessToken = sign(
         {
           email: teacher.email,
-          fullName: teacher.name,
+          name: teacher.name,
           id: teacher.id,
           role: teacher.role,
         },
@@ -68,7 +69,7 @@ router.post("/login", async (req, res) => {
       return res.json({
         token: accessToken,
         email: email,
-        fullName: teacher.name,
+        name: teacher.name,
         id: teacher.id,
         role: teacher.role,
       });
@@ -111,6 +112,12 @@ router.post("/", uploadFile.single("image"), async (req, res) => {
     SubjectId: subjectId,
     image: image,
   });
+
+  Users.create({
+    name,
+    email,
+    role: "teacher",
+  })
 
   return res.json({ message: "Teacher has been Added" });
 });
@@ -170,6 +177,8 @@ router.delete("/:id", async (req, res) => {
       id: id,
     },
   });
+
+  
 
   return res.json({ message: "Teacher has been Deleted" });
 });
