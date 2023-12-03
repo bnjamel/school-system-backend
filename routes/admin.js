@@ -78,7 +78,7 @@ router.post("/login", async (req, res) => {
 
 // Post New Admin
 router.post("/", uploadFile.single("image"), async (req, res) => {
-  const { name, birthdate, degree, experience, email, password, location } =
+  const { name, birthdate, degree, experience, email, password, location, phone_number } =
     req.body;
   const image = req.file.filename;
 
@@ -95,6 +95,7 @@ router.post("/", uploadFile.single("image"), async (req, res) => {
     location,
     role: "admin",
     image: image,
+    phone_number
   });
 
   return res.json({ message: "Admin has been Added" });
@@ -103,7 +104,7 @@ router.post("/", uploadFile.single("image"), async (req, res) => {
 // Update Admin Row
 router.put("/:id", uploadFile.single("image"), async (req, res) => {
   const id = req.params.id;
-  const { name, birthdate, degree, experience, email, password, location } =
+  const { name, birthdate, degree, experience, email, password, location, phone_number } =
     req.body;
     const image = req.file.filename;
 
@@ -121,6 +122,7 @@ router.put("/:id", uploadFile.single("image"), async (req, res) => {
       location,
       role: "admin",
       image: image,
+      phone_number
     },
     {
       where: {

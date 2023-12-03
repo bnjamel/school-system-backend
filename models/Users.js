@@ -15,6 +15,10 @@ module.exports = (sequelize, DataType) => {
       },
     });
   
+    Users.associate = (modules) => {
+      Users.hasMany(modules.Announcements);
+  };
+
     return Users;
   };
   

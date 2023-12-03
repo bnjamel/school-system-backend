@@ -56,6 +56,10 @@ app.use("/teacher", teacherRouter);
 const userRouter = require("./routes/user");
 app.use("/user", userRouter);
 
+// ! Announcements Router
+const announcementRouter = require("./routes/announcement");
+app.use("/announcement", announcementRouter);
+
 db.sequelize.sync({ alter: true }).then(() => {
   app.listen(3001, () => {
     console.log("Listening");
