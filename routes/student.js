@@ -6,6 +6,7 @@ const {
   Classes,
   Student_Document,
   Study_Biography,
+  Users
 } = require("../models");
 const { validateToken } = require("../middlewares/userAuth");
 const { sign } = require("jsonwebtoken");
@@ -87,24 +88,43 @@ router.post("/login", async (req, res) => {
 });
 
 // Post New Student
-router.post("/", uploadFile.single("image"), async (req, res) => {
-  const { name, birthdate, email, password, location, classId, divisionId } =
-    req.body;
-  const image = req.file.filename;
-
-  const student = await Students.findOne({ where: { email: email } });
-  if (student) return res.json({ error: "student Already Exist" });
-
-  Students.create({
+router.post("/", uploadFile.fields([
+  {name: "image", maxCount: 1},
+  { name: "identification_card", maxCount: 1 },
+  { name: "residence_card", maxCount: 1 },
+]), async (req, res) => {
+  const {
     name,
     birthdate,
     email,
     password,
     location,
+    ClassId,
+    DivisionId,
+    parent,
+    phone_number } =
+    req.body;
+    const identificationCard = req.files["identification_card"] ? req.files["identification_card"][0].filename : "no_image";
+    const residenceCard = req.files["residence_card"] ? req.files["residence_card"][0].filename : "no_image";
+    const image = req.files["image"] ? req.files["image"][0].filename: "no_image";
+
+  const student = await Students.findOne({ where: { email: email } });
+  if (student) return res.json({ error: "student Already Exist" });
+
+  Students.create({
+    name: name,
+    birthdate: birthdate,
+    email: email,
+    password: password,
+    location: location,
     role: "student",
-    ClassId: classId,
-    DivisionId: divisionId,
+    ClassId: ClassId,
+    DivisionId: DivisionId,
     image: image,
+    phone_number: phone_number,
+    residence_card: residenceCard,
+    identification_card: identificationCard,
+    parent: parent
   });
   
   Users.create({
@@ -119,7 +139,7 @@ router.post("/", uploadFile.single("image"), async (req, res) => {
 // Update Student Row
 router.put("/:id", uploadFile.single("image"), async (req, res) => {
   const id = req.params.id;
-  const { name, birthdate, email, password, location, classId, divisionId } =
+  const { name, birthdate, email, password, location, classId, divisionId, phone_number } =
     req.body;
     const image = req.file.filename;
 
@@ -136,7 +156,8 @@ router.put("/:id", uploadFile.single("image"), async (req, res) => {
       location,
       ClassId: classId,
       DivisionId: divisionId,
-      image: image
+      image: image,
+      phone_number
     },
     {
       where: {

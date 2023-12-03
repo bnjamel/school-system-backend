@@ -92,6 +92,7 @@ router.post("/", uploadFile.single("image"), async (req, res) => {
     password,
     location,
     subjectId,
+    phone_number
   } = req.body;
   const image = req.file.filename;
 
@@ -111,6 +112,8 @@ router.post("/", uploadFile.single("image"), async (req, res) => {
     role: "teacher",
     SubjectId: subjectId,
     image: image,
+    phone_number
+
   });
 
   Users.create({
@@ -135,6 +138,7 @@ router.put("/:id", uploadFile.single("image"), async (req, res) => {
     location,
     subjectId,
     role,
+    phone_number
   } = req.body;
   const image = req.file.filename;
 
@@ -153,7 +157,8 @@ router.put("/:id", uploadFile.single("image"), async (req, res) => {
       location,
       role: role,
       SubjectId: subjectId,
-      image: image
+      image: image,
+      phone_number
     },
     {
       where: {

@@ -4,7 +4,23 @@ module.exports = (sequelize, DataType) => {
       type: DataType.STRING(),
       allowNull: false,
     },
+    parent: {
+      type: DataType.STRING(),
+      allowNull: false,
+    },
+    phone_number: {
+      type: DataType.STRING(),
+      allowNull: false,
+    },
     image: {
+      type: DataType.STRING(),
+      allowNull: false,
+    },
+    identification_card: {
+      type: DataType.STRING(),
+      allowNull: false,
+    },
+    residence_card: {
       type: DataType.STRING(),
       allowNull: false,
     },
