@@ -60,6 +60,10 @@ app.use("/user", userRouter);
 const announcementRouter = require("./routes/announcement");
 app.use("/announcement", announcementRouter);
 
+// ! isPending Router
+const pendingRouter = require("./routes/isPending");
+app.use("/pending", pendingRouter);
+
 db.sequelize.sync({ alter: true }).then(() => {
   app.listen(3001, () => {
     console.log("Listening");

@@ -31,6 +31,21 @@ router.get("/:title", async (req, res) => {
   }
 });
 
+// // Get Announcements by Userid
+// router.get("/byUserName/:name", async (req, res) => {
+//   const name = req.params.name;
+
+//   const announcement = await Announcements.findOne({
+//     where: { UserId: name },
+//     include: [Users],
+//   });
+//   if (announcement) {
+//     return res.json(announcement);
+//   } else {
+//     return res.json({ error: "No announcement with such title" });
+//   }
+// });
+
 // Get Announcements by type
 router.get("/byType/:type", async (req, res) => {
   const type = req.params.type;
@@ -63,12 +78,12 @@ router.get("/byId/:id", async (req, res) => {
 });
 
 // Post New Announcements
-router.post("/", uploadFile.single("image"), async (req, res) => {
+router.post("/", uploadFile.single("cover"), async (req, res) => {
   const { title, body, date, type, UserId } = req.body;
-  const image = req.file.filename;
+  const cover = req.file.filename;
 
   Announcements.create({
-    cover: image,
+    cover: cover,
     title: title,
     body: body,
     date: date,

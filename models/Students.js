@@ -24,6 +24,22 @@ module.exports = (sequelize, DataType) => {
       type: DataType.STRING(),
       allowNull: false,
     },
+    student_document_image: {
+      type: DataType.STRING(),
+      allowNull: false,
+    },
+    about: {
+      type: DataType.STRING(),
+      allowNull: true,
+    },
+    gender: {
+      type: DataType.STRING(),
+      allowNull: false,
+    },
+    evaluation: {
+      type: DataType.STRING(),
+      allowNull: true,
+    },
     birthdate: {
       type: DataType.DATEONLY(),
       allowNull: false,

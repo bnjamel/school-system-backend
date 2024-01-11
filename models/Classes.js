@@ -1,3 +1,4 @@
+
 module.exports = (sequelize, DataType) => {
   const Classes = sequelize.define("Classes", {
     name: {
@@ -13,3 +14,4 @@ module.exports = (sequelize, DataType) => {
 
   return Classes;
 };
+

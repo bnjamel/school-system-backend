@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { Admins } = require("../models");
+const { Admins, Users } = require("../models");
 const { validateToken } = require("../middlewares/userAuth");
 const { sign } = require("jsonwebtoken");
 const { uploadFile } = require("../middlewares/uploadFile");
@@ -28,6 +28,7 @@ router.get("/:name", async (req, res) => {
     return res.json({ error: "No admin with such name" });
   }
 });
+
 
 // Get Admin by Id
 router.get("/byId/:id", async (req, res) => {
@@ -130,6 +131,16 @@ router.put("/:id", uploadFile.single("image"), async (req, res) => {
       },
     }
   );
+
+  Users.update({
+    name,
+    email,
+  },
+  {
+    where: {
+      email: admin.email,
+    },
+  })
 
   return res.json({ message: "Admin has been Updated" });
 });

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { Teachers, Subjects, Appreciation_Books } = require("../models");
+const { Teachers, Subjects, Appreciation_Books,Announcements, Users } = require("../models");
 const { validateToken } = require("../middlewares/userAuth");
 const { sign } = require("jsonwebtoken");
 const { uploadFile } = require("../middlewares/uploadFile");
@@ -11,6 +11,7 @@ router.get("/byId/:id", async (req, res) => {
   
     const user = await Users.findOne({
       where: { id: id },
+      include: [Announcements]
     });
     if (user) {
       return res.json(user);
