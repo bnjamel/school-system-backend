@@ -1,10 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { Teachers, Subjects, Appreciation_Books } = require("../models");
+const { Teachers, Subjects, Appreciation_Books, Users } = require("../models");
 const { validateToken } = require("../middlewares/userAuth");
 const { sign } = require("jsonwebtoken");
 const { uploadFile } = require("../middlewares/uploadFile");
-const Users = require("../models/Users");
 
 // Get All Teachers
 router.get("/", async (req, res) => {
@@ -12,9 +11,7 @@ router.get("/", async (req, res) => {
     include: [Subjects, Appreciation_Books],
   });
   if (!teachers) return res.json({ error: "Error, can't fetch teachers" });
-
   if (teachers.length <= 0) return res.json({ error: "There are no teachers" });
-
   return res.json(teachers);
 });
 
@@ -82,16 +79,19 @@ router.post("/login", async (req, res) => {
 });
 
 // Post New Teacher
-router.post("/", uploadFile.single("image"), async (req, res) => {
+router.post("/",
+ uploadFile.single("image"),
+  async (req, res) => {
   const {
     name,
     birthdate,
     degree,
+    gender,
     experience,
     email,
     password,
     location,
-    subjectId,
+    SubjectId,
     phone_number
   } = req.body;
   const image = req.file.filename;
@@ -109,8 +109,9 @@ router.post("/", uploadFile.single("image"), async (req, res) => {
     email,
     password,
     location,
+    gender,
     role: "teacher",
-    SubjectId: subjectId,
+    SubjectId: SubjectId,
     image: image,
     phone_number
 
@@ -137,25 +138,26 @@ router.put("/:id", uploadFile.single("image"), async (req, res) => {
     password,
     location,
     subjectId,
-    role,
-    phone_number
+    phone_number,
+    gender
   } = req.body;
   const image = req.file.filename;
 
 
-  const teacher = await Teachers.findOne({ where: { email: email } });
+  const teacher = await Teachers.findOne({ where: { id: id } });
   if (!teacher) return res.json({ error: "Teacher Does Not Exist!" });
 
   Teachers.update(
     {
       name,
       birthdate,
+      gender,
       degree,
       experience,
       email,
       password,
       location,
-      role: role,
+      role: "teacher",
       SubjectId: subjectId,
       image: image,
       phone_number
@@ -166,6 +168,16 @@ router.put("/:id", uploadFile.single("image"), async (req, res) => {
       },
     }
   );
+
+  Users.update({
+    name,
+    email,
+  },
+  {
+    where: {
+      email: teacher.email,
+    },
+  })
 
   return res.json({ message: "Teacher has been Updated" });
 });

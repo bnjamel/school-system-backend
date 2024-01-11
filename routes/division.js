@@ -32,6 +32,23 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// Get Division by Class Id
+router.get("/byClass/:id", async (req, res) => {
+  const id = req.params.id;
+  // const classId = req.params.classId;
+
+  const division = await Divisions.findAll({
+    where: { ClassId: id },
+    include: [Students, Classes, Schedules],
+  });
+  
+  if (division) {
+    return res.json(division);
+  } else {
+    return res.json({ error: "No division with such name" });
+  }
+});
+
 // Post New Division
 router.post("/", async (req, res) => {
   const { name, classId } = req.body;
