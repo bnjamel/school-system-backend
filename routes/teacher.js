@@ -147,27 +147,50 @@ router.put("/:id", uploadFile.single("image"), async (req, res) => {
   const teacher = await Teachers.findOne({ where: { id: id } });
   if (!teacher) return res.json({ error: "Teacher Does Not Exist!" });
 
-  Teachers.update(
-    {
-      name,
-      birthdate,
-      gender,
-      degree,
-      experience,
-      email,
-      password,
-      location,
-      role: "teacher",
-      SubjectId: subjectId,
-      image: image,
-      phone_number
-    },
-    {
-      where: {
-        id: id,
+  if(!req.file) {
+    Teachers.update(
+      {
+        name,
+        birthdate,
+        gender,
+        degree,
+        experience,
+        email,
+        password,
+        location,
+        role: "teacher",
+        SubjectId: subjectId,
+        phone_number
       },
-    }
-  );
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
+  } else {
+    Teachers.update(
+      {
+        name,
+        birthdate,
+        gender,
+        degree,
+        experience,
+        email,
+        password,
+        location,
+        role: "teacher",
+        SubjectId: subjectId,
+        image: image,
+        phone_number
+      },
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
+  }
 
   Users.update({
     name,
