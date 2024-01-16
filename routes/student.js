@@ -225,34 +225,59 @@ router.put("/:id", uploadFile.single("image"), async (req, res) => {
   const id = req.params.id;
   const { name, birthdate, email, password, location, classId, divisionId, phone_number, about, evaluation, gender, parent } =
     req.body;
-    const image = req.file.filename;
 
 
   const student = await Students.findOne({ where: { id: id } });
   if (!student) return res.json({ error: "Student Does not exist!" });
 
-  Students.update(
-    {
-      name,
-      birthdate,
-      email,
-      password,
-      location,
-      ClassId: classId,
-      DivisionId: divisionId,
-      image: image,
-      phone_number,
-      about,
-      evaluation,
-      gender,
-      parent
-    },
-    {
-      where: {
-        id: id,
+  if(!req.file) {
+    Students.update(
+      {
+        name,
+        birthdate,
+        email,
+        password,
+        location,
+        ClassId: classId,
+        DivisionId: divisionId,
+        phone_number,
+        about,
+        evaluation,
+        gender,
+        parent
       },
-    }
-  );
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
+  } else {
+    const image = req.file.filename;
+
+    Students.update(
+      {
+        name,
+        birthdate,
+        email,
+        password,
+        location,
+        ClassId: classId,
+        DivisionId: divisionId,
+        image: image,
+        phone_number,
+        about,
+        evaluation,
+        gender,
+        parent
+      },
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
+  }
 
   Users.update({
     name: name,

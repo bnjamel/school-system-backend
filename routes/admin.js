@@ -105,32 +105,52 @@ router.post("/", uploadFile.single("image"), async (req, res) => {
 // Update Admin Row
 router.put("/:id", uploadFile.single("image"), async (req, res) => {
   const id = req.params.id;
-  const { name, birthdate, degree, experience, email, password, location, phone_number } =
-    req.body;
-    const image = req.file.filename;
+  const { name, birthdate, degree, experience, email, password, location, phone_number } = req.body;
 
-  const admin = await Admins.findOne({ where: { id: id } });
-  if (!admin) return res.json({ error: "Admin Does Not Exist!" });
+    const admin = await Admins.findOne({ where: { id: id } });
+    if (!admin) return res.json({ error: "Admin Does Not Exist!" });
 
-  Admins.update(
-    {
-      name,
-      birthdate,
-      degree,
-      experience,
-      email,
-      password,
-      location,
-      role: "admin",
-      image: image,
-      phone_number
-    },
-    {
-      where: {
-        id: id,
-      },
+    if(!req.file) {
+      Admins.update(
+        {
+          name,
+          birthdate,
+          degree,
+          experience,
+          email,
+          password,
+          location,
+          phone_number
+        },
+        {
+          where: {
+            id: id,
+          },
+        }
+      );
+    } else {
+      const image = req.file.filename;
+      Admins.update(
+        {
+          name,
+          birthdate,
+          degree,
+          experience,
+          email,
+          password,
+          location,
+          image: image,
+          phone_number
+        },
+        {
+          where: {
+            id: id,
+          },
+        }
+      );
     }
-  );
+
+
 
   Users.update({
     name,
